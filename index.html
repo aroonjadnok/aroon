@@ -158,10 +158,9 @@
 
     <script>
         // --- API Configuration ---
-        // IMPORTANT: For running on GitHub Pages or a standard web server, you MUST replace the empty string below
-        // with your actual Gemini API Key from Google AI Studio, or the application will not work.
-        // สำคัญ: หากต้องการรันบน GitHub Pages หรือเซิร์ฟเวอร์เว็บมาตรฐาน คุณต้องใส่ API Key ของคุณเองแทนสตริงว่าง 
-        // มิฉะนั้น แอปพลิเคชันจะไม่ทำงาน
+        // IMPORTANT: For running on GitHub Pages or a standard web server, this API Key has been provided by the user.
+        // Make sure it is secured or replaced with a key obtained from Google AI Studio.
+        // สำคัญ: นี่คือ API Key ที่ผู้ใช้ระบุ หากพบปัญหาในการใช้งาน กรุณาตรวจสอบว่าเป็นคีย์จริงที่ได้จาก Google AI Studio (ค่าจะขึ้นต้นด้วย AIza...)
         const API_KEY = "AIzaSyBHTAhwKii9g9zhAAEeuCgzFEMJArXvrvs"; 
         const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=" + API_KEY;
 
@@ -282,7 +281,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
+            const reader = new FileReaderReader();
             reader.onloadend = () => {
                 if (file.size > 5 * 1024 * 1024) { // 5MB limit check 
                     showMessage("รูปภาพมีขนาดใหญ่เกินไป (ไม่เกิน 5MB)");
@@ -321,9 +320,10 @@
                 return;
             }
 
+            // Check for missing API key
             if (!API_KEY) {
-                showMessage("ข้อผิดพลาด: API Key หายไป กรุณาใส่ API Key ของคุณในโค้ด JavaScript");
-                console.error("API Key is missing. Please insert your key in the JavaScript code to run outside the development environment.");
+                showMessage("ข้อผิดพลาด: API Key หายไป กรุณาใส่ API Key จริงของคุณ");
+                console.error("API Key is missing. Please insert your actual Gemini API Key.");
                 return;
             }
             
@@ -377,4 +377,3 @@
     </script>
 </body>
 </html>
-
