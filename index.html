@@ -81,7 +81,7 @@
                     <option value="elegant chignon">ชินยอง</option>
                     <option value="half-up, half-down hairstyle">มัดผมครึ่งหัว</option>
                     <option value="straight shoulder-length hair with bangs">ผมประบ่าหน้าม้าตรง</option>
-                    <option value="beach waves hairstyle">ทรงบีชเวฟ</option>
+                    <option value="beach waves hairstyle">ทรงบีชเวฟ</property>
                     <option value="high messy bun">มวยผมยุ่งๆ</option>
                     <option value="fishtail braid">เปียหางปลา</option>
                     <option value="space buns">ทรงผมซาลาเปา</option>
@@ -158,9 +158,8 @@
 
     <script>
         // --- API Configuration ---
-        // IMPORTANT: For running on GitHub Pages or a standard web server, this API Key has been provided by the user.
-        // Make sure it is secured or replaced with a key obtained from Google AI Studio.
-        // สำคัญ: นี่คือ API Key ที่ผู้ใช้ระบุ หากพบปัญหาในการใช้งาน กรุณาตรวจสอบว่าเป็นคีย์จริงที่ได้จาก Google AI Studio (ค่าจะขึ้นต้นด้วย AIza...)
+        // *** สำคัญมาก: กรุณาเปลี่ยนค่า API Key ด้านล่างนี้เป็น API Key ใหม่ที่ใช้งานได้ของคุณ ***
+        // *** คีย์ต้องขึ้นต้นด้วย AIzaS... และมีการเปิดใช้งาน Gemini API ในโปรเจกต์แล้ว ***
         const API_KEY = "AIzaSyBHTAhwKii9g9zhAAEeuCgzFEMJArXvrvs"; 
         const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=" + API_KEY;
 
@@ -192,8 +191,8 @@
         
         // Function to handle exponential backoff for API calls
         async function fetchWithExponentialBackoff(payload, maxRetries = 5) {
-            if (!API_KEY) {
-                throw new Error("API Key is missing. Please insert your key in the JavaScript code to run outside the development environment.");
+            if (API_KEY === "YOUR_NEW_GEMINI_API_KEY_HERE" || !API_KEY) {
+                throw new Error("API Key ยังไม่ได้ถูกแทนที่ กรุณาใส่คีย์ใหม่ของคุณ");
             }
             let attempt = 0;
             while (attempt < maxRetries) {
@@ -210,10 +209,25 @@
                     }
 
                     if (!response.ok) {
-                        // Non-retriable error
-                        const errorBody = await response.json();
-                        // Try to extract a specific error message if available
+                        // Non-retriable error (e.g., 401 Unauthorized, 403 Forbidden)
+                        let errorBody;
+                        try {
+                            errorBody = await response.json();
+                        } catch (e) {
+                            errorBody = { error: { message: "Could not parse API error response." } };
+                        }
+                        
                         const errorMessage = errorBody.error?.message || JSON.stringify(errorBody);
+                        // Log full error in console for debugging
+                        console.error(`Gemini API Error Status ${response.status}:`, errorMessage);
+                        
+                        // Throw a specific error based on status code
+                        if (response.status === 403) {
+                            throw new Error(`API Error: ${response.status} (Forbidden) - คีย์นี้อาจยังไม่ได้เปิดใช้งาน Gemini API ในโปรเจกต์`);
+                        } else if (response.status === 401) {
+                            throw new Error(`API Error: ${response.status} (Unauthorized) - API Key ไม่ถูกต้อง`);
+                        }
+                        
                         throw new Error(`API Error: ${response.status} - ${errorMessage}`);
                     }
 
@@ -281,7 +295,8 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            const reader = new FileReaderReader();
+            const reader = new FileReader();
+            
             reader.onloadend = () => {
                 if (file.size > 5 * 1024 * 1024) { // 5MB limit check 
                     showMessage("รูปภาพมีขนาดใหญ่เกินไป (ไม่เกิน 5MB)");
@@ -321,9 +336,9 @@
             }
 
             // Check for missing API key
-            if (!API_KEY) {
-                showMessage("ข้อผิดพลาด: API Key หายไป กรุณาใส่ API Key จริงของคุณ");
-                console.error("API Key is missing. Please insert your actual Gemini API Key.");
+            if (API_KEY === "YOUR_NEW_GEMINI_API_KEY_HERE" || !API_KEY) {
+                showMessage("ข้อผิดพลาด: กรุณาแทนที่ API Key ด้วยคีย์ใหม่ที่ถูกต้อง");
+                console.error("API Key is missing or default. Please insert your actual Gemini API Key.");
                 return;
             }
             
@@ -347,7 +362,8 @@
 
             } catch (error) {
                 console.error('Error generating image:', error);
-                showMessage(error.message || "เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง");
+                // Display the specific error message caught in fetchWithExponentialBackoff
+                showMessage(error.message || "เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง"); 
             } finally {
                 loadingOverlay.classList.add('hidden');
                 hairstyleDropdown.disabled = false;
