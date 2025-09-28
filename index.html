@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องมือออกแบบทรงผม</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="container mx-auto p-6 bg-white rounded-2xl shadow-xl flex flex-col items-center">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-6 text-center">
+            เครื่องมือออกแบบทรงผม AI
+        </h1>
+        <p class="text-center text-gray-600 mb-8">
+            อัปโหลดรูปภาพใบหน้าของคุณ แล้วเลือกทรงผมเพื่อสร้างลุคใหม่!
+        </p>
+
+        <!-- Image Upload Section -->
+        <div class="w-full flex justify-center mb-6">
+            <label for="upload" class="bg-blue-600 hover:bg-blue-700 transition-colors duration-300 text-white font-bold py-3 px-6 rounded-full cursor-pointer shadow-lg active:scale-95">
+                อัปโหลดรูปภาพ
+            </label>
+            <input type="file" id="upload" accept="image/*" class="hidden">
+        </div>
+
+        <!-- Display Image and Loading Overlay -->
+        <!-- Adjusted aspect ratio for better face display -->
+        <div id="image-container" class="relative w-full rounded-2xl overflow-hidden shadow-lg border-4 border-white aspect-[3/4] max-w-sm bg-gray-200 flex items-center justify-center mb-8">
+            <img id="display-image" src="https://placehold.co/400x533/a3a3a3/ffffff?text=อัปโหลดรูปใบหน้า" alt="รูปภาพของคุณ" class="w-full h-full object-cover">
+            <div id="loading-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center hidden">
+                <div class="animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent"></div>
+                <p class="mt-4 text-gray-700 font-medium">กำลังสร้างทรงผมใหม่...</p>
+            </div>
+        </div>
+        
+        <!-- Hairstyle Options: Dropdown -->
+        <div class="w-full mb-6">
+            <label for="hairstyle-dropdown" class="block text-gray-700 font-bold mb-2">
+                เลือกทรงผมจากตัวเลือก:
+            </label>
+            <select id="hairstyle-dropdown" class="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-purple-500 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                <option value="" disabled selected>-- กรุณาอัปโหลดรูปภาพก่อน --</option>
+                <optgroup label="ทรงผมผู้ชาย">
+                    <option value="classic short side part">ทรงผมสั้นแบบคลาสสิก</option>
+                    <option value="modern quiff hairstyle">ทรงควีฟ</option>
+                    <option value="messy textured hairstyle">ทรงผมยุ่งๆ</option>
+                    <option value="buzz cut">ทรงบัซคัต</option>
+                    <option value="long hair, tied in a man bun">มัดจุก</option>
+                    <option value="slicked back hair">ผมเสย</option>
+                    <option value="high fade hairstyle">ทรงผมรองทรงสูง</option>
+                    <option value="undercut">อันเดอร์คัต</option>
+                    <option value="french crop">เฟรนช์ครอป</option>
+                    <option value="comb over">คอมโบเวอร์</option>
+                    <option value="crew cut">ครูว์คัต</option>
+                    <option value="pompadour">ปอมปาดัวร์</option>
+                    <option value="spiky hair">ผมตั้งสไปกี้</option>
+                    <option value="faux hawk">ฟ็อกซ์ฮอว์ก</option>
+                    <option value="curly high top fade">ไฮท็อปเฟดหยิก</option>
+                    <option value="short dreadlocks">เดรดล็อกสั้น</option>
+                    <option value="mohawk">โมฮอว์ก</option>
+                </optgroup>
+                <optgroup label="ทรงผมผู้หญิง">
+                    <option value="long, wavy, and feminine hairstyle">ทรงผมยาวมีคลื่น</option>
+                    <option value="short, stylish bob haircut">ทรงผมบ๊อบสั้น</option>
+                    <option value="long, straight, and layered haircut">ผมตรงยาวมีเลเยอร์</option>
+                    <option value="short, voluminous pixie cut">ทรงพิกซี่</option>
+                    <option value="classic ponytail">ทรงผมหางม้า</option>
+                    <option value="braided bun">มวยผมถักเปีย</option>
+                    <option value="long cascading curls">ผมยาวลอนใหญ่</option>
+                    <option value="elegant chignon">ชินยอง</option>
+                    <option value="half-up, half-down hairstyle">มัดผมครึ่งหัว</option>
+                    <option value="straight shoulder-length hair with bangs">ผมประบ่าหน้าม้าตรง</option>
+                    <option value="beach waves hairstyle">ทรงบีชเวฟ</option>
+                    <option value="high messy bun">มวยผมยุ่งๆ</option>
+                    <option value="fishtail braid">เปียหางปลา</option>
+                    <option value="space buns">ทรงผมซาลาเปา</option>
+                    <option value="curly bangs">หน้าม้าหยิก</option>
+                    <option value="side-swept bangs">หน้าม้าปัดข้าง</option>
+                    <option value="layered haircut with curtain bangs">ผมเลเยอร์หน้าม้าซีทรู</option>
+                    <option value="lob haircut (long bob)">ทรงบ๊อบยาว</option>
+                    <option value="shag haircut">ทรงผมชาก</option>
+                    <option value="cornrows">ทรงผมคอร์นโรว์</option>
+                    <option value="dreadlocks">เดรดล็อก</option>
+                </optgroup>
+                <optgroup label="ทรงผมหยิก">
+                    <option value="curly, voluminous afro hairstyle">ทรงแอฟโฟร</option>
+                    <option value="short, curly hairstyle">ทรงผมหยิกสั้น</option>
+                    <option value="long, natural curly hairstyle">ผมหยิกยาวแบบธรรมชาติ</option>
+                    <option value="curly bob haircut">ทรงบ๊อบหยิก</option>
+                    <option value="tight curls with a side part">ผมหยิกแน่นๆ แสกข้าง</option>
+                    <option value="loose curly hairstyle">ผมหยิกเป็นลอนหลวม</option>
+                    <option value="curly pixie cut">ทรงพิกซี่หยิก</option>
+                    <option value="curly lob (long bob)">ทรงบ๊อบยาวหยิก</option>
+                    <option value="ringlet curls">ลอนผมแบบ Ringlet</option>
+                </optgroup>
+                <optgroup label="ทรงผมสีต่างๆ">
+                    <option value="bright pink hair">ผมสีชมพูสว่าง</option>
+                    <option value="vibrant blue hair">ผมสีน้ำเงิน</option>
+                    <option value="platinum blonde hair">ผมสีบลอนด์แพลทินัม</option>
+                    <option value="fiery red hair">ผมสีแดงเพลิง</option>
+                    <option value="cool silver hair">ผมสีเงิน</option>
+                    <option value="pastel purple hair">ผมสีม่วงพาสเทล</option>
+                    <option value="neon green hair">ผมสีเขียวนีออน</option>
+                    <option value="rainbow colored hair">ผมสีรุ้ง</option>
+                    <option value="balayage highlights">ทำสีบาลายาจ</option>
+                    <option value="ombre hair">ทำสีแบบออมเบร</option>
+                    <option value="rose gold hair">ผมสีโรสโกลด์</option>
+                    <option value="ash gray hair">ผมสีเทาหม่น</option>
+                    <option value="burgundy red hair">ผมสีแดงเบอร์กันดี</option>
+                    <option value="turquoise hair">ผมสีเทอร์ควอยซ์</option>
+                    <option value="lavender hair">ผมสีลาเวนเดอร์</option>
+                    <option value="midnight black hair">ผมสีดำสนิท</option>
+                </optgroup>
+                <optgroup label="ทรงผมพิเศษและอื่นๆ">
+                    <option value="bald head">ทรงผมหัวล้าน</option>
+                    <option value="long dreadlocks">ทรงผมเดรดล็อกยาว</option>
+                    <option value="punk hairstyle">ทรงผมพังค์</option>
+                    <option value="two-block hairstyle">ทรงผมทูบล็อก (two-block)</option>
+                    <option value="mullet hairstyle">ทรงผมมัลเล็ต</option>
+                    <option value="digital perm hairstyle">ทรงผมดัดดิจิตอล</option>
+                    <option value="short afro hairstyle">ทรงแอฟโฟรขนาดเล็ก</option>
+                    <option value="side shave hairstyle">ไถผมข้าง</option>
+                    <option value="braided crown">ผมเปียคาดศีรษะ</option>
+                    <option value="slicked back ponytail">หางม้าแบบรวบตึง</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="w-full flex justify-center mb-8">
+            <button id="generate-btn" class="bg-purple-600 hover:bg-purple-700 transition-colors duration-300 text-white font-bold py-3 px-6 rounded-full shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                สร้างทรงผม
+            </button>
+        </div>
+
+        <!-- Download Button -->
+        <div class="w-full flex justify-center">
+            <button id="download-btn" class="bg-emerald-500 hover:bg-emerald-600 transition-colors duration-300 text-white font-bold py-3 px-6 rounded-full shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                ดาวน์โหลดรูปภาพ
+            </button>
+        </div>
+
+        <!-- Custom Message Box -->
+        <div id="message-box" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-xl hidden transition-opacity duration-300 opacity-0 z-50">
+            <p id="message-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // --- API Configuration ---
+        const API_KEY = ""; // API key is handled by the environment
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=" + API_KEY;
+
+        // --- DOM elements ---
+        const uploadInput = document.getElementById('upload');
+        const displayImage = document.getElementById('display-image');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const hairstyleDropdown = document.getElementById('hairstyle-dropdown');
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+
+        let uploadedImageBase64 = null;
+        let uploadedImageMimeType = null;
+        let generatedImageBase64 = null;
+
+        // Function to show a custom message box
+        function showMessage(message) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden', 'opacity-0');
+            messageBox.classList.add('opacity-100');
+            setTimeout(() => {
+                messageBox.classList.remove('opacity-100');
+                messageBox.classList.add('opacity-0');
+                setTimeout(() => messageBox.classList.add('hidden'), 300);
+            }, 3000); // Hide after 3 seconds
+        }
+        
+        // Function to handle exponential backoff for API calls
+        async function fetchWithExponentialBackoff(payload, maxRetries = 5) {
+            let attempt = 0;
+            while (attempt < maxRetries) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 || response.status >= 500) {
+                        // Rate limit or server error - retry
+                        throw new Error(`Retriable API error: ${response.status}`);
+                    }
+
+                    if (!response.ok) {
+                        // Non-retriable error
+                        const errorBody = await response.json();
+                        throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorBody)}`);
+                    }
+
+                    return response.json();
+
+                } catch (error) {
+                    console.error('Fetch attempt failed:', error.message);
+                    attempt++;
+
+                    if (attempt >= maxRetries) {
+                        throw new Error("Failed to connect to the Gemini API after multiple retries.");
+                    }
+
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    console.log(`Retrying in ${delay / 1000}s... (Attempt ${attempt})`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        // Main function to call the Image-to-Image API
+        async function generateHairstyle(prompt, base64Image, mimeType) {
+            const finalPrompt = `Apply this new hairstyle to the person in the input image. The new hairstyle should be a professional, studio-quality image of the user with the applied hairstyle: ${prompt}. Focus on the hairstyle and hair color while keeping the person's face and original features recognizable.`;
+            
+            const payload = {
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: finalPrompt },
+                            {
+                                inlineData: {
+                                    mimeType: mimeType,
+                                    data: base64Image
+                                }
+                            }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    responseModalities: ['TEXT', 'IMAGE']
+                },
+                // systemInstruction is optional for simple I2I, using the main prompt for control
+            };
+
+            try {
+                const result = await fetchWithExponentialBackoff(payload);
+
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (base64Data) {
+                    return base64Data;
+                } else {
+                    console.error("API response missing image data:", result);
+                    throw new Error("API did not return a generated image.");
+                }
+
+            } catch (error) {
+                throw new Error(`การสร้างรูปภาพล้มเหลว: ${error.message}`); // Image generation failed
+            }
+        }
+
+
+        // Event listener for image upload
+        uploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Ensure file size is reasonable before reading base64 (Optional, but good practice)
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit check (arbitrary)
+                    showMessage("รูปภาพมีขนาดใหญ่เกินไป (ไม่เกิน 5MB)");
+                    uploadInput.value = null;
+                    return;
+                }
+
+                // Extract base64 part and mime type
+                uploadedImageBase64 = reader.result.split(',')[1];
+                uploadedImageMimeType = file.type;
+
+                displayImage.src = reader.result;
+                downloadBtn.disabled = true;
+                
+                // Enable controls
+                hairstyleDropdown.disabled = false;
+                hairstyleDropdown.querySelector('option[disabled]').textContent = "-- เลือกทรงผม --";
+                generateBtn.disabled = !hairstyleDropdown.value; // Enable if a value is already selected
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Event listener for dropdown change to re-enable button
+        hairstyleDropdown.addEventListener('change', () => {
+            generateBtn.disabled = !uploadedImageBase64 || !hairstyleDropdown.value;
+        });
+
+        // Event listener for hairstyle generation button
+        generateBtn.addEventListener('click', async () => {
+            if (!uploadedImageBase64) {
+                showMessage("กรุณาอัปโหลดรูปภาพใบหน้าก่อน");
+                return;
+            }
+
+            const hairstylePrompt = hairstyleDropdown.value;
+            if (!hairstylePrompt) {
+                showMessage("กรุณาเลือกทรงผมจากเมนู");
+                return;
+            }
+            
+            loadingOverlay.classList.remove('hidden');
+            generateBtn.disabled = true;
+            downloadBtn.disabled = true;
+            hairstyleDropdown.disabled = true;
+
+            try {
+                // Call the new generation function
+                const base64Data = await generateHairstyle(
+                    hairstylePrompt,
+                    uploadedImageBase64,
+                    uploadedImageMimeType
+                );
+
+                generatedImageBase64 = base64Data;
+                // Since the API typically returns JPEG, we use image/jpeg
+                const imageUrl = `data:image/jpeg;base64,${generatedImageBase64}`; 
+                displayImage.src = imageUrl;
+                downloadBtn.disabled = false;
+                showMessage("สร้างทรงผมใหม่สำเร็จ!");
+
+            } catch (error) {
+                console.error('Error generating image:', error);
+                showMessage(error.message || "เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง");
+            } finally {
+                loadingOverlay.classList.add('hidden');
+                hairstyleDropdown.disabled = false;
+                generateBtn.disabled = false;
+            }
+        });
+
+        // Event listener for download button
+        downloadBtn.addEventListener('click', () => {
+            if (generatedImageBase64) {
+                const a = document.createElement('a');
+                // Use a default filename that indicates the file is from the generator
+                a.href = `data:image/jpeg;base64,${generatedImageBase64}`;
+                a.download = 'ทรงผมใหม่_AI_Result.jpg'; 
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+
+        // Initial state setup
+        if (!uploadedImageBase64) {
+            hairstyleDropdown.disabled = true;
+            generateBtn.disabled = true;
+            downloadBtn.disabled = true;
+        }
+
+    </script>
+</body>
+</html>
